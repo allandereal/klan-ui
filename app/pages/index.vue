@@ -1,5 +1,6 @@
 <script setup lang="js">
-import { getPaginationRowModel } from '@tanstack/vue-table'
+import {getPaginationRowModel} from '@tanstack/vue-table'
+import {h} from 'vue'
 import ViolationActionFormModal from "~/components/ViolationActionFormModal.vue";
 
 const table = useTemplateRef('table')
@@ -8,29 +9,50 @@ const overlay = useOverlay()
 const modal = overlay.create(ViolationActionFormModal, {
   props: {
     violation: null
-  }
+  },
 })
 
 async function open(violation) {
-  modal.patch({
+
+  const actionTaken = await modal.open({
     violation: violation
   })
 
-  await modal.open()
+  if (actionTaken){
+    violations.value = violations.value.map(item =>
+        actionTaken.violation_id == item.id ? {...item, actionTaken: actionTaken} : item
+    )
+  }
 }
 
-const { data, status } = await useFetch('https://cms.klanlogistics.com:8443/api/wylon-apis/protected?passcode=dataView123', {
+const { data: violations, status } = await useFetch('https://cms.klanlogistics.com:8443/api/wylon-apis/protected?passcode=dataView123', {
   key: 'table-violations',
   transform: (data) => {
-    const a = (
+    return (
         data?.data?.map((violation) => ({
           id: violation.id,
           ...violation.attributes,
         })) || []
     )
-    return a
   },
   lazy: true
+})
+
+const { data: actionsTaken, status: actionsTakenStatus } = await useFetch('http://127.0.0.1:8000'+'/api/violation-actions', {
+  key: 'table-actions-taken',
+  transform: (data) => {
+    return data?.data|| []
+  },
+  lazy: true
+})
+
+const violationsWithActions = computed(()=>{
+  return violations.value.map((violation) => {
+    return {
+      actionTaken: actionsTaken.value?.find((action) => action.violation_id == violation.id),
+      ...violation,
+    }
+  })
 })
 
 const columns = [
@@ -74,6 +96,13 @@ const columns = [
     header: 'Published At',
   },
   {
+    accessorKey: 'actionTaken',
+    header: 'Actions Taken',
+    cell: ({ row }) => {
+      return h('div', { class: 'font-medium' }, row.getValue('actionTaken')?.action_taken)
+    }
+  },
+  {
     id: 'action',
     header: 'Action'
   }
@@ -91,7 +120,7 @@ const pagination = ref({
     <UTable
         ref="table"
         v-model:pagination="pagination"
-        :data="data"
+        :data="violationsWithActions"
         :columns="columns"
         :pagination-options="{
         getPaginationRowModel: getPaginationRowModel()
