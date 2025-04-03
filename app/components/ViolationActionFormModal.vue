@@ -6,6 +6,7 @@ const props = defineProps({
 
 const emit  = defineEmits(['close', 'actionTaken'])
 const form = useTemplateRef('form')
+const config = useRuntimeConfig()
 
 const action = reactive({
   record_date: undefined,
