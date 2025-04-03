@@ -94,6 +94,9 @@ const pagination = ref({
     <UTable
         ref="table"
         v-model:pagination="pagination"
+        :loading="status === 'pending' || actionsTakenStatus === 'pending'"
+        loading-color="primary"
+        loading-animation="carousel"
         :data="violationsWithActions"
         :columns="columns"
         :pagination-options="{
