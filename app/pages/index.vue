@@ -3,6 +3,7 @@ import {getPaginationRowModel} from '@tanstack/vue-table'
 import {h} from 'vue'
 import ViolationActionFormModal from "~/components/ViolationActionFormModal.vue";
 
+const config = useRuntimeConfig()
 const table = useTemplateRef('table')
 const overlay = useOverlay()
 
@@ -25,7 +26,7 @@ async function open(violation) {
   }
 }
 
-const { data: violations, status } = await useFetch('https://cms.klanlogistics.com:8443/api/wylon-apis/protected?passcode=dataView123', {
+const { data: violations, status } = await useFetch(`${config.public.cmsApiBase}/wylon-apis/protected?passcode=${config.cmsApiPasscode}`, {
   key: 'table-violations',
   transform: (data) => {
     return (
@@ -38,7 +39,7 @@ const { data: violations, status } = await useFetch('https://cms.klanlogistics.c
   lazy: true
 })
 
-const { data: actionsTaken, status: actionsTakenStatus } = await useFetch('http://127.0.0.1:8000'+'/api/violation-actions', {
+const { data: actionsTaken, status: actionsTakenStatus } = await useFetch(`${config.public.appApiBase}/violation-actions`, {
   key: 'table-actions-taken',
   transform: (data) => {
     return data?.data|| []
@@ -57,44 +58,17 @@ const violationsWithActions = computed(()=>{
 
 const columns = [
   {accessorKey: 'vcode', header: 'VCODE'},
-  {accessorKey: 'violation', header: 'Violation',},
-  {
-    accessorKey: 'beginningtime',
-    header: 'Beginning Time',
-  },
-  {
-    accessorKey: 'initiallocation',
-    header: 'Initial Location',
-  },
-  {
-    accessorKey: 'endtime',
-    header: 'End Time',
-  },
-  {
-    accessorKey: 'finallocation',
-    header: 'Final Location',
-  },
-  {
-    accessorKey: 'value',
-    header: 'Value',
-  },
-  {
-    accessorKey: 'averagespeed',
-    header: 'Final Speed',
-  },
-  {
-    accessorKey: 'count',
-    header: 'Count',
-  },{
-    accessorKey: 'createdAt',
-    header: 'Created At',
-  },{
-    accessorKey: 'updatedAt',
-    header: 'Updated At',
-  },{
-    accessorKey: 'publishedAt',
-    header: 'Published At',
-  },
+  {accessorKey: 'violation', header: 'Violation'},
+  {accessorKey: 'beginningtime', header: 'Beginning Time'},
+  {accessorKey: 'initiallocation', header: 'Initial Location'},
+  {accessorKey: 'endtime', header: 'End Time'},
+  {accessorKey: 'finallocation', header: 'Final Location'},
+  {accessorKey: 'value', header: 'Value'},
+  {accessorKey: 'averagespeed', header: 'Final Speed'},
+  {accessorKey: 'count', header: 'Count'},
+  {accessorKey: 'createdAt', header: 'Created At'},
+  {accessorKey: 'updatedAt', header: 'Updated At'},
+  {accessorKey: 'publishedAt', header: 'Published At'},
   {
     accessorKey: 'actionTaken',
     header: 'Actions Taken',

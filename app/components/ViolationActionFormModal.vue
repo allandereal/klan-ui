@@ -15,7 +15,7 @@ const action = reactive({
 })
 
 async function handleFormSubmit() {
-  await $fetch('http://127.0.0.1:8000'+'/api/violation-actions', {
+  await $fetch(`${config.public.appApiBase}/violation-actions`, {
     method: 'POST',
     body: {
       violation_id: props.violation.id,

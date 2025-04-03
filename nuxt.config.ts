@@ -2,6 +2,14 @@
 export default defineNuxtConfig({
   devtools: { enabled: true },
 
+  runtimeConfig: {
+    cmsApiPasscode: '',
+    public: {
+      appApiBase: '',
+      cmsApiBase: '',
+    }
+  },
+
   modules: [
     '@nuxt/ui',
     '@nuxt/eslint',
