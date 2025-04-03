@@ -9,7 +9,7 @@ const overlay = useOverlay()
 
 const modal = overlay.create(ViolationActionFormModal, {
   props: {
-    violation: null
+    violation: {}
   },
 })
 
@@ -48,12 +48,12 @@ const { data: actionsTaken, status: actionsTakenStatus } = await useFetch(`${con
 })
 
 const violationsWithActions = computed(()=>{
-  return violations.value.map((violation) => {
+  return violations.value?.map((violation) => {
     return {
       actionTaken: actionsTaken.value?.find((action) => action.violation_id == violation.id),
       ...violation,
     }
-  })
+  }) || []
 })
 
 const columns = [

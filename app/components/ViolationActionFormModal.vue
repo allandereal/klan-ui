@@ -3,7 +3,7 @@
 const props = defineProps({
   violation: {
     type: Object,
-    default: () => {}
+    default: () => ({})
   }
 })
 
@@ -16,7 +16,7 @@ const action = reactive({
   record_date: undefined,
   action_date: undefined,
   action_taken: undefined,
-  other_remarks: undefined,
+  other_remarks: undefined
 })
 
 async function onSubmit() {
@@ -61,7 +61,7 @@ async function onError(event) {
 <template>
   <UModal
       :close="{ onClick: () => emit('close', {}) }"
-      :title="`Add Action for violation: ${violation.vcode}`"
+      :title="`Add Action for violation: (${violation.vcode} : ${violation.violation})`"
   >
     <template #body>
       <UForm ref="actionForm" :validate="validate" :state="action" class="space-y-4" @error="onError">
