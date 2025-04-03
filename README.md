@@ -11,7 +11,7 @@ Clone the repository from github
 
 ```bash
 #git
-git clone https://github.com/allandereal/klan-ui .
+git clone https://github.com/allandereal/klan-ui
 ```
 
 Make sure to install the dependencies:
