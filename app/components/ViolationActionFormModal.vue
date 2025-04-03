@@ -1,12 +1,16 @@
 <script setup lang="js">
 
 const props = defineProps({
-  violation: Object
+  violation: {
+    type: Object,
+    default: () => {}
+  }
 })
 
 const emit  = defineEmits(['close', 'actionTaken'])
-const form = useTemplateRef('form')
+const form = useTemplateRef('actionForm')
 const config = useRuntimeConfig()
+const toast = useToast()
 
 const action = reactive({
   record_date: undefined,
@@ -15,33 +19,34 @@ const action = reactive({
   other_remarks: undefined,
 })
 
-async function handleFormSubmit() {
-  await $fetch(`${config.public.appApiBase}/violation-actions`, {
-    method: 'POST',
-    body: {
-      violation_id: props.violation.id,
-      ...action
-    },
-    onResponse: ({response}) => {
-      if(response.status === 201){
-        emit('close', response._data);
-      }
-    }
-  })
-}
-
-const validate = (state) => {
-  const errors = []
-  if (!state.email) errors.push({ name: 'email', message: 'Required' })
-  if (!state.password) errors.push({ name: 'password', message: 'Required' })
-  return errors
-}
-
-const toast = useToast()
-async function onSubmit(event) {
+async function onSubmit() {
   form.value.submit()
-  await handleFormSubmit()
-  //toast.add({ title: 'Success', description: 'The form has been submitted.', color: 'success' })
+
+  if (form.value.valid) {
+    await $fetch(`${config.public.appApiBase}/violation-actions`, {
+      method: 'POST',
+      body: {
+        violation_id: props.violation.id,
+        ...action
+      },
+      onResponse: ({response}) => {
+        if(response.status === 201){
+          emit('close', response._data);
+          toast.add({ title: 'Success', description: 'Action has been take!.', color: 'success' })
+        }
+      }
+    })
+  }
+}
+
+const validate = (item) => {
+  const errors = []
+
+  Object.keys(action).filter(key => key !== 'other_remarks').forEach((key) => {
+    if (!item[key]) errors.push({ name: key, message: 'Required' })
+  })
+
+  return errors
 }
 
 async function onError(event) {
@@ -59,7 +64,7 @@ async function onError(event) {
       :title="`Add Action for violation: ${violation.vcode}`"
   >
     <template #body>
-      <UForm ref="form" :validate="validate" :state="action" class="space-y-4" @submit="onSubmit" @error="onError">
+      <UForm ref="actionForm" :validate="validate" :state="action" class="space-y-4" @submit="onSubmit" @error="onError">
         <UFormField label="Record Date" name="record_date">
           <UInput v-model="action.record_date" type="datetime-local" class="w-full" required />
         </UFormField>
