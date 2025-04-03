@@ -22,7 +22,7 @@ const action = reactive({
 async function onSubmit() {
   form.value.submit()
 
-  if (form.value.valid) {
+  if (form.value.errors.length ===  0) {
     await $fetch(`${config.public.appApiBase}/violation-actions`, {
       method: 'POST',
       body: {
@@ -64,7 +64,7 @@ async function onError(event) {
       :title="`Add Action for violation: ${violation.vcode}`"
   >
     <template #body>
-      <UForm ref="actionForm" :validate="validate" :state="action" class="space-y-4" @submit="onSubmit" @error="onError">
+      <UForm ref="actionForm" :validate="validate" :state="action" class="space-y-4" @error="onError">
         <UFormField label="Record Date" name="record_date">
           <UInput v-model="action.record_date" type="datetime-local" class="w-full" required />
         </UFormField>
