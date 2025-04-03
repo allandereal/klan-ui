@@ -116,7 +116,7 @@ const pagination = ref({
 
 <template>
 
-  <div class="w-full space-y-4 pb-4">
+  <div class="w-5/6 mx-auto space-y-4 pb-4">
     <UTable
         ref="table"
         v-model:pagination="pagination"
