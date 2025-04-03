@@ -44,3 +44,11 @@ Start the development server on `http://localhost:3000`:
 # npm
 npm run dev
 ```
+
+### Screenshots
+
+*Violations Table*
+![Violations Table](app/assets/images/table.png "Violations Table")
+
+*Action Taken modal*
+![Action Taken modal](app/assets/images/modal.png "Action Taken modal")
